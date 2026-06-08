@@ -17,7 +17,7 @@ struct Laundry {
 
 const string NAMAFILE = "data_laundry.txt";
 
-Laundry data[MAX];
+Laundry dataLaundry[MAX];
 int jumlahData = 0;
 
 void garsPemisah(char c = '-', int n = 60) {
@@ -32,7 +32,7 @@ string toUpperStr(string s) {
 
 bool idAda(const string& id) {
     for (int i = 0; i < jumlahData; i++)
-        if (data[i].id == id) return true;
+        if (dataLaundry[i].id == id) return true;
     return false;
 }
 
@@ -52,7 +52,7 @@ int hitungHarga(const string& jenis, float berat) {
 
 void tambahTransaksi() {
     if (jumlahData >= MAX) {
-        cout << "[!] Data penuh! Kapasitas maksimal " << MAX << " transaksi.\n";
+        cout << "Data penuh! Kapasitas maksimal " << MAX << " transaksi.\n";
         return;
     }
 
@@ -60,7 +60,7 @@ void tambahTransaksi() {
     baru.id     = generateID();
     baru.status = "Menunggu";
 
-    cout << "\n[+] ID otomatis: " << baru.id << endl;
+    cout << "\nID otomatis: " << baru.id << endl;
     cout << "    Nama Pelanggan : "; cin.ignore(); getline(cin, baru.nama);
     cout << "    Berat (kg)     : "; cin >> baru.berat;
     cout << "    Jenis Layanan  \n";
@@ -78,9 +78,9 @@ void tambahTransaksi() {
 
     baru.hargaTotal = hitungHarga(baru.jenisLayanan, baru.berat);
 
-    data[jumlahData++] = baru;
+    dataLaundry[jumlahData++] = baru;
 
-    cout << "\n[OK] Transaksi berhasil ditambahkan!\n";
+    cout << "\nTransaksi berhasil ditambahkan!\n";
     cout << "     Total Harga : Rp" << baru.hargaTotal << "\n";
 }
 
@@ -109,35 +109,37 @@ void cetakBaris(const Laundry& d) {
 
 void tampilkanData() {
     if (jumlahData == 0) {
-        cout << "[!] Belum ada data transaksi.\n"; return;
+        cout << "Belum ada dataLaundry transaksi.\n"; return;
     }
-    cout << "\n=== DAFTAR SELURUH TRANSAKSI (" << jumlahData << " data) ===\n";
+    cout << "\n=== DAFTAR SELURUH TRANSAKSI (" << jumlahData << " dataLaundry) ===\n";
     headerTabel();
     for (int i = 0; i < jumlahData; i++)
-        cetakBaris(data[i]);
+        cetakBaris(dataLaundry[i]);
     garsPemisah('=');
 }
 
+//PAKAI BUBBLE SORT
 void urutkanInternal(int jenisKunci) {
     for (int i = 0; i < jumlahData - 1; i++) {
         for (int j = 0; j < jumlahData - i - 1; j++) {
             bool tukar = false;
-            if (jenisKunci == 1)      tukar = toUpperStr(data[j].id) > toUpperStr(data[j+1].id);
-            else if (jenisKunci == 2) tukar = toUpperStr(data[j].nama) > toUpperStr(data[j+1].nama);
-            else if (jenisKunci == 3) tukar = toUpperStr(data[j].status) > toUpperStr(data[j+1].status);
+            if (jenisKunci == 1)      tukar = toUpperStr(dataLaundry[j].id) > toUpperStr(dataLaundry[j+1].id);
+            else if (jenisKunci == 2) tukar = toUpperStr(dataLaundry[j].nama) > toUpperStr(dataLaundry[j+1].nama);
+            else if (jenisKunci == 3) tukar = toUpperStr(dataLaundry[j].status) > toUpperStr(dataLaundry[j+1].status);
 
             if (tukar) {
-                Laundry temp = data[j];
-                data[j] = data[j+1];
-                data[j+1] = temp;
+                Laundry temp = dataLaundry[j];
+                dataLaundry[j] = dataLaundry[j+1];
+                dataLaundry[j+1] = temp;
             }
         }
     }
 }
 
+//INI BINARY SEARCH
 void cariData() {
     if (jumlahData == 0) {
-        cout << "[!] Belum ada data untuk dicari.\n";
+        cout << "Belum ada data laundry untuk dicari.\n";
         return;
     }
 
@@ -161,28 +163,28 @@ void cariData() {
         int mid = low + (high - low) / 2;
         string nilaiTengah = "";
 
-        if (pil == 1)      nilaiTengah = toUpperStr(data[mid].id);
-        else if (pil == 2) nilaiTengah = toUpperStr(data[mid].nama);
-        else if (pil == 3) nilaiTengah = toUpperStr(data[mid].status);
+        if (pil == 1)      nilaiTengah = toUpperStr(dataLaundry[mid].id);
+        else if (pil == 2) nilaiTengah = toUpperStr(dataLaundry[mid].nama);
+        else if (pil == 3) nilaiTengah = toUpperStr(dataLaundry[mid].status);
 
         if (nilaiTengah == k || (pil == 2 && nilaiTengah.find(k) != string::npos)) {
-            cetakBaris(data[mid]);
+            cetakBaris(dataLaundry[mid]);
             ditemukan = true;
 
             int kiri = mid - 1;
             while (kiri >= 0) {
-                string nilaiKiri = (pil == 1) ? toUpperStr(data[kiri].id) : (pil == 2) ? toUpperStr(data[kiri].nama) : toUpperStr(data[kiri].status);
+                string nilaiKiri = (pil == 1) ? toUpperStr(dataLaundry[kiri].id) : (pil == 2) ? toUpperStr(dataLaundry[kiri].nama) : toUpperStr(dataLaundry[kiri].status);
                 if (nilaiKiri == k || (pil == 2 && nilaiKiri.find(k) != string::npos)) {
-                    cetakBaris(data[kiri]);
+                    cetakBaris(dataLaundry[kiri]);
                     kiri--;
                 } else break;
             }
             
             int kanan = mid + 1;
             while (kanan < jumlahData) {
-                string nilaiKanan = (pil == 1) ? toUpperStr(data[kanan].id) : (pil == 2) ? toUpperStr(data[kanan].nama) : toUpperStr(data[kanan].status);
+                string nilaiKanan = (pil == 1) ? toUpperStr(dataLaundry[kanan].id) : (pil == 2) ? toUpperStr(dataLaundry[kanan].nama) : toUpperStr(dataLaundry[kanan].status);
                 if (nilaiKanan == k || (pil == 2 && nilaiKanan.find(k) != string::npos)) {
-                    cetakBaris(data[kanan]);
+                    cetakBaris(dataLaundry[kanan]);
                     kanan++;
                 } else break;
             }
@@ -196,41 +198,41 @@ void cariData() {
         }
     }
 
-    if (!ditemukan) cout << "[!] Data tidak ditemukan.\n";
+    if (!ditemukan) cout << "Data tidak ditemukan.\n";
 }
 
 void cekStatus() {
     cout << "\nMasukkan ID pelanggan : "; string id; cin >> id;
     for (int i = 0; i < jumlahData; i++) {
-        if (data[i].id == id) {
+        if (dataLaundry[i].id == id) {
             cout << "\n--- Info Transaksi ---\n";
-            cetakBaris(data[i]);
+            cetakBaris(dataLaundry[i]);
             return;
         }
     }
-    cout << "[!] ID tidak ditemukan.\n";
+    cout << "ID tidak ditemukan.\n";
 }
 
 void editData() {
     cout << "\nMasukkan ID yang ingin diedit : "; string id; cin >> id;
     for (int i = 0; i < jumlahData; i++) {
-        if (data[i].id == id) {
-            cout << "\nData saat ini:\n"; cetakBaris(data[i]);
+        if (dataLaundry[i].id == id) {
+            cout << "\nData saat ini:\n"; cetakBaris(dataLaundry[i]);
             cout << "\nNama baru (kosongkan = tidak berubah) : ";
             cin.ignore(); string tmp; getline(cin, tmp);
-            if (!tmp.empty()) data[i].nama = tmp;
+            if (!tmp.empty()) dataLaundry[i].nama = tmp;
 
             cout << "Berat baru (0 = tidak berubah)        : ";
             float b; cin >> b;
-            if (b > 0) data[i].berat = b;
+            if (b > 0) dataLaundry[i].berat = b;
 
             cout << "Jenis Layanan baru (kosong = tetap) [Reguler/Express/Kilat] : ";
             cin.ignore(); getline(cin, tmp);
-            if (!tmp.empty()) data[i].jenisLayanan = tmp;
+            if (!tmp.empty()) dataLaundry[i].jenisLayanan = tmp;
 
-            data[i].hargaTotal = hitungHarga(data[i].jenisLayanan, data[i].berat);
+            dataLaundry[i].hargaTotal = hitungHarga(dataLaundry[i].jenisLayanan, dataLaundry[i].berat);
 
-            cout << "[OK] Data berhasil diperbarui. Harga baru: Rp" << data[i].hargaTotal << "\n";
+            cout << "[OK] Data berhasil diperbarui. Harga baru: Rp" << dataLaundry[i].hargaTotal << "\n";
             return;
         }
     }
@@ -240,46 +242,46 @@ void editData() {
 void hapusData() {
     cout << "\nMasukkan ID yang ingin dihapus : "; string id; cin >> id;
     for (int i = 0; i < jumlahData; i++) {
-        if (data[i].id == id) {
-            cout << "Konfirmasi hapus " << data[i].nama << "? (y/n) : ";
+        if (dataLaundry[i].id == id) {
+            cout << "Konfirmasi hapus " << dataLaundry[i].nama << "? (y/n) : ";
             char k; cin >> k;
             if (k == 'y' || k == 'Y') {
                 for (int j = i; j < jumlahData - 1; j++)
-                    data[j] = data[j + 1];
+                    dataLaundry[j] = dataLaundry[j + 1];
                 jumlahData--;
-                cout << "[OK] Data berhasil dihapus.\n";
-            } else cout << "[!] Penghapusan dibatalkan.\n";
+                cout << "Data berhasil dihapus.\n";
+            } else cout << "Penghapusan dibatalkan.\n";
             return;
         }
     }
-    cout << "[!] ID tidak ditemukan.\n";
+    cout << "ID tidak ditemukan.\n";
 }
 
 void updateStatus() {
     cout << "\nMasukkan ID : "; string id; cin >> id;
     for (int i = 0; i < jumlahData; i++) {
-        if (data[i].id == id) {
-            cout << "Status saat ini : " << data[i].status << endl;
+        if (dataLaundry[i].id == id) {
+            cout << "Status saat ini : " << dataLaundry[i].status << endl;
             cout << "Pilih status baru:\n";
             cout << "(1) Menunggu\n(2) Dicuci\n(3) Disetrika\n(4) Selesai\n(5) Sudah Diambil\n";
             cout << "Pilihan : "; int p; cin >> p;
             switch (p) {
-                case 1: data[i].status = "Menunggu";      break;
-                case 2: data[i].status = "Dicuci";        break;
-                case 3: data[i].status = "Disetrika";     break;
-                case 4: data[i].status = "Selesai";       break;
-                case 5: data[i].status = "Sudah Diambil"; break;
-                default: cout << "[!] Pilihan tidak valid.\n"; return;
+                case 1: dataLaundry[i].status = "Menunggu";      break;
+                case 2: dataLaundry[i].status = "Dicuci";        break;
+                case 3: dataLaundry[i].status = "Disetrika";     break;
+                case 4: dataLaundry[i].status = "Selesai";       break;
+                case 5: dataLaundry[i].status = "Sudah Diambil"; break;
+                default: cout << "Pilihan tidak valid.\n"; return;
             }
-            cout << "[OK] Status diperbarui menjadi: " << data[i].status << "\n";
+            cout << "Status diperbarui menjadi: " << dataLaundry[i].status << "\n";
             return;
         }
     }
-    cout << "[!] ID tidak ditemukan.\n";
+    cout << "ID tidak ditemukan.\n";
 }
 
 void urutkanData() {
-    if (jumlahData == 0) { cout << "[!] Belum ada data.\n"; return; }
+    if (jumlahData == 0) { cout << "Belum ada data laundry.\n"; return; }
 
     cout << "\nUrutkan berdasarkan:\n";
     cout << "(1) Nama\n(2) Berat\n(3) Harga\n";
@@ -290,23 +292,23 @@ void urutkanData() {
         for (int j = 0; j < jumlahData - i - 1; j++) {
             bool swap_cond = false;
             if (pil == 1) swap_cond = (asc == 1)
-                ? data[j].nama > data[j+1].nama
-                : data[j].nama < data[j+1].nama;
+                ? dataLaundry[j].nama > dataLaundry[j+1].nama
+                : dataLaundry[j].nama < dataLaundry[j+1].nama;
             else if (pil == 2) swap_cond = (asc == 1)
-                ? data[j].berat > data[j+1].berat
-                : data[j].berat < data[j+1].berat;
+                ? dataLaundry[j].berat > dataLaundry[j+1].berat
+                : dataLaundry[j].berat < dataLaundry[j+1].berat;
             else if (pil == 3) swap_cond = (asc == 1)
-                ? data[j].hargaTotal > data[j+1].hargaTotal
-                : data[j].hargaTotal < data[j+1].hargaTotal;
+                ? dataLaundry[j].hargaTotal > dataLaundry[j+1].hargaTotal
+                : dataLaundry[j].hargaTotal < dataLaundry[j+1].hargaTotal;
 
             if (swap_cond) {
-                Laundry temp = data[j];
-                data[j] = data[j+1];
-                data[j+1] = temp;
+                Laundry temp = dataLaundry[j];
+                dataLaundry[j] = dataLaundry[j+1];
+                dataLaundry[j+1] = temp;
             }
         }
     }
-    cout << "[OK] Data berhasil diurutkan.\n";
+    cout << "Data berhasil diurutkan.\n";
     tampilkanData();
 }
 
@@ -317,64 +319,64 @@ void beriDiskon(Laundry* d, float persen) {
 void menuDiskon() {
     cout << "\nMasukkan ID untuk diberi diskon : "; string id; cin >> id;
     for (int i = 0; i < jumlahData; i++) {
-        if (data[i].id == id) {
-            cout << "Harga sebelum diskon : Rp" << data[i].hargaTotal << "\n";
+        if (dataLaundry[i].id == id) {
+            cout << "Harga sebelum diskon : Rp" << dataLaundry[i].hargaTotal << "\n";
             cout << "Besar diskon (%)     : "; float p; cin >> p;
 
-            beriDiskon(&data[i], p);
+            beriDiskon(&dataLaundry[i], p);
 
-            cout << "[OK] Harga setelah diskon " << p << "% : Rp" << data[i].hargaTotal << "\n";
+            cout << "Harga setelah diskon " << p << "% : Rp" << dataLaundry[i].hargaTotal << "\n";
             return;
         }
     }
-    cout << "[!] ID tidak ditemukan.\n";
+    cout << "ID tidak ditemukan.\n";
 }
 
 long long totalPendapatanRekursif(int index) {
     if (index < 0) return 0;
-    return data[index].hargaTotal + totalPendapatanRekursif(index - 1);
+    return dataLaundry[index].hargaTotal + totalPendapatanRekursif(index - 1);
 }
 
 void hitungTotalPendapatan() {
-    if (jumlahData == 0) { cout << "[!] Belum ada data.\n"; return; }
+    if (jumlahData == 0) { cout << "Belum ada data laundry.\n"; return; }
     long long total = totalPendapatanRekursif(jumlahData - 1);
-    cout << "\n[=] Total Pendapatan (rekursif) : Rp" << total << "\n";
+    cout << "\nTotal Pendapatan (rekursif) : Rp" << total << "\n";
 }
 
 void simpanKeFile() {
     ofstream file(NAMAFILE);
     if (!file.is_open()) {
-        cout << "[!] Gagal membuka file untuk penulisan.\n"; return;
+        cout << "Gagal membuka file untuk penulisan.\n"; return;
     }
     file << jumlahData << "\n";
     for (int i = 0; i < jumlahData; i++) {
-        file << data[i].id          << "\n"
-             << data[i].nama        << "\n"
-             << data[i].berat       << "\n"
-             << data[i].jenisLayanan<< "\n"
-             << data[i].hargaTotal  << "\n"
-             << data[i].status      << "\n";
+        file << dataLaundry[i].id          << "\n"
+             << dataLaundry[i].nama        << "\n"
+             << dataLaundry[i].berat       << "\n"
+             << dataLaundry[i].jenisLayanan<< "\n"
+             << dataLaundry[i].hargaTotal  << "\n"
+             << dataLaundry[i].status      << "\n";
     }
     file.close();
-    cout << "[OK] Data berhasil disimpan ke \"" << NAMAFILE << "\" (" << jumlahData << " transaksi).\n";
+    cout << "Data berhasil disimpan ke \"" << NAMAFILE << "\" (" << jumlahData << " transaksi).\n";
 }
 
 void muatDariFile() {
     ifstream file(NAMAFILE);
     if (!file.is_open()) {
-        cout << "[!] File \"" << NAMAFILE << "\" tidak ditemukan.\n"; return;
+        cout << "File \"" << NAMAFILE << "\" tidak ditemukan.\n"; return;
     }
     file >> jumlahData; file.ignore();
     for (int i = 0; i < jumlahData; i++) {
-        getline(file, data[i].id);
-        getline(file, data[i].nama);
-        file >> data[i].berat; file.ignore();
-        getline(file, data[i].jenisLayanan);
-        file >> data[i].hargaTotal; file.ignore();
-        getline(file, data[i].status);
+        getline(file, dataLaundry[i].id);
+        getline(file, dataLaundry[i].nama);
+        file >> dataLaundry[i].berat; file.ignore();
+        getline(file, dataLaundry[i].jenisLayanan);
+        file >> dataLaundry[i].hargaTotal; file.ignore();
+        getline(file, dataLaundry[i].status);
     }
     file.close();
-    cout << "[OK] Data berhasil dimuat dari \"" << NAMAFILE << "\" (" << jumlahData << " transaksi).\n";
+    cout << "Data berhasil dimuat dari \"" << NAMAFILE << "\" (" << jumlahData << " transaksi).\n";
 }
 
 void tampilkanMenu() {
@@ -425,12 +427,12 @@ int main() {
             case 11: simpanKeFile();         break;
             case 12: muatDariFile();         break;
             case 0:
-                cout << "Menyimpan data sebelum keluar...\n";
+                cout << "Menyimpan data laundry sebelum keluar...\n";
                 simpanKeFile();
                 cout << "Terima kasih! Program selesai.\n";
                 break;
             default:
-                cout << "[!] Pilihan tidak valid.\n";
+                cout << "Pilihan tidak valid.\n";
         }
         if (pilihan != 0) {
             cout << "\nTekan Enter untuk lanjut...";
